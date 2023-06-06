@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import Button, { Label } from "@smui/button";
   export let type: "button" | "submit" | "reset" | null | undefined;
   export let className: string;
 </script>

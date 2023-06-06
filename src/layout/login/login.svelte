@@ -1,47 +1,24 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
   import { createForm } from "svelte-forms-lib";
   import logo from "$lib/images/murrayarronsonlogo.svg";
-  import { setLogin } from "../../store/authContextStore";
-  import { setLogout } from "../../store/authContextStore";
+  import { setLogin, setLogout } from "../../shared/helper/helpers";
   import Input from "../../components/ui/input-field/InputField.svelte";
   import Button from "../../components/ui/button/Button.svelte";
-  import { HOME_ROUTE } from "../../constants/RoutesConstants";
-  import { get } from "svelte/store";
   import { authContextStore } from "../../store/authContextStore";
-
-  // let isAuthenticated = true;
-  // $: isAuthenticating = false;
-  // $: unAuthorized = false;
-  // $: accountType = "";
-  // $: landingPage = "";
-  let context: any;
-
-  // let isAuthenticated: boolean,
-  // isAuthenticating: boolean,
-  // unAuthorized: boolean;
-
-  const unsubscribe = authContextStore.subscribe((state) => {
-    context = state;
-  });
-
-  $: isAuthenticated = context.isAuthenticated;
 
   $: isLoading = false;
   $: error = "";
   $: userNameError = false;
   $: passwordError = false;
-  $: {
-    console.log("context:", context);
-    console.log("isAuthenticated:", isAuthenticated);
-  }
-
   const handlelog = () => {
     setLogout();
   };
   onMount(() => {
-    if (isAuthenticated) {
-      // window.location.href = HOME_ROUTE;
+    console.log("mounted login page");
+
+    if (authContextStore) {
       console.log("route Changed");
     }
   });
@@ -55,7 +32,7 @@
       isLoading = true;
       const response = await setLogin($form.userName, $form.password);
       if (response === true) {
-        // window.location.href = HOME_ROUTE;
+        goto("/");
         console.log("route Changed");
       } else {
         error = "Oops! Wrong Email or Password. Give it another try!";
@@ -65,12 +42,10 @@
       isLoading = false;
     },
   });
-  onDestroy(() => {
-    unsubscribe();
-  });
 </script>
 
-<h1>{isAuthenticated}</h1>
+<h1>{$authContextStore.isAuthenticated}</h1>
+<h1>isAuthenticated {$authContextStore.isAuthenticated}</h1>
 <div>
   <div class="login-container">
     <div class="sign-in-form-container">
