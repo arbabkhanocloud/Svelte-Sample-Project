@@ -22,6 +22,10 @@
     }
   });
 
+  $: {
+    console.log("eror:", $errors.email);
+  }
+
   const handleEmailChange = () => {
     emailError = false;
     error = "";
@@ -106,7 +110,15 @@
           <p class="error-message">{error}</p>
         {/if}
         <div class="align-check-box" />
-        <Button className="sign-in-button " type="submit">
+        <Button
+          className="sign-in-button "
+          type="submit"
+          isDisabled={error !== "" ||
+            emailError ||
+            passwordError ||
+            $errors.email !== "" ||
+            $errors.password !== ""}
+        >
           {#if isLoading}
             <Loader />
           {:else}
@@ -118,7 +130,7 @@
   </div>
 </div>
 
-<style>
+<style lang="scss">
   .login-container {
     background: url("../../lib/images/background-login.svg") no-repeat center
       fixed;

@@ -1,13 +1,14 @@
 <script lang="ts">
   export let type: "button" | "submit" | "reset" | null | undefined;
   export let className: string;
+  export let isDisabled: boolean;
 </script>
 
-<button class={className} {type}>
+<button class={className} {type} disabled={isDisabled}>
   <slot />
 </button>
 
-<style>
+<style lang="scss">
   .sign-in-button {
     color: white;
     border: none;
