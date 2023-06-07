@@ -1,20 +1,19 @@
 <script lang="ts">
+  import Loader from "../../components/shared/loader/loader.svelte";
+  import * as yup from "yup";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { createForm } from "svelte-forms-lib";
   import logo from "$lib/images/murrayarronsonlogo.svg";
-  import { setLogin, setLogout } from "../../shared/helper/helpers";
+  import { setLogin } from "../../shared/helper/helpers";
   import Input from "../../components/ui/input-field/InputField.svelte";
   import Button from "../../components/ui/button/Button.svelte";
   import { authContextStore } from "../../store/authContextStore";
 
   $: isLoading = false;
   $: error = "";
-  $: userNameError = false;
+  $: emailError = false;
   $: passwordError = false;
-  const handlelog = () => {
-    setLogout();
-  };
   onMount(() => {
     console.log("mounted login page");
 
@@ -22,30 +21,56 @@
       console.log("route Changed");
     }
   });
-  const { form, errors, state, handleChange, handleSubmit } = createForm({
-    initialValues: {
-      userName: "",
-      password: "",
-    },
 
-    onSubmit: async (values) => {
-      isLoading = true;
-      const response = await setLogin($form.userName, $form.password);
-      if (response === true) {
-        goto("/");
-        console.log("route Changed");
-      } else {
-        error = "Oops! Wrong Email or Password. Give it another try!";
-        userNameError = true;
-        passwordError = true;
-      }
-      isLoading = false;
-    },
-  });
+  const handleEmailChange = () => {
+    emailError = false;
+    error = "";
+    $errors.email = "";
+  };
+
+  const handlePasswordChange = () => {
+    passwordError = false;
+    error = "";
+    $errors.password = "";
+  };
+
+  $: inputPasswordClasses =
+    ($authContextStore.unAuthorized && passwordError) || $errors.password
+      ? "invalid-input-field"
+      : "input-field-container";
+  $: inputEmailClasses =
+    ($authContextStore.unAuthorized && emailError) || $errors.email
+      ? "invalid-input-field"
+      : "input-field-container";
+
+  const { form, errors, state, handleChange, handleSubmit, touched } =
+    createForm({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+
+      validationSchema: yup.object().shape({
+        email: yup.string().email().max(35).required(),
+        password: yup.string().min(5).max(15).required(),
+      }),
+
+      onSubmit: async (values: any) => {
+        console.log("inside submit button");
+        isLoading = true;
+        const response = await setLogin(values.email, values.password);
+        if (response === true) {
+          goto($authContextStore.landingPage);
+        } else {
+          error = "Oops! Wrong Email or Password. Give it another try!";
+          emailError = true;
+          passwordError = true;
+        }
+        isLoading = false;
+      },
+    });
 </script>
 
-<h1>{$authContextStore.isAuthenticated}</h1>
-<h1>isAuthenticated {$authContextStore.isAuthenticated}</h1>
 <div>
   <div class="login-container">
     <div class="sign-in-form-container">
@@ -56,24 +81,38 @@
           id="email"
           label="Email Address"
           type="email"
-          className="form-input"
+          className={inputEmailClasses}
           placeholder="Email Address"
-          bind:val={$form.userName}
+          bind:val={$form.email}
+          handleChange={handleEmailChange}
         />
+        {#if $errors.email}
+          <small>{$errors.email}</small>
+        {/if}
         <div class="bottom-margin" />
         <Input
           id="password"
           label="Password"
           type="password"
+          className={inputPasswordClasses}
           bind:val={$form.password}
-          className="form-input"
           placeholder="Password"
+          handleChange={handlePasswordChange}
         />
+        {#if $errors.password}
+          <small>{$errors.password}</small>
+        {/if}
         {#if error}
           <p class="error-message">{error}</p>
         {/if}
         <div class="align-check-box" />
-        <Button className="sign-in-button " type="submit">SIGN IN</Button>
+        <Button className="sign-in-button " type="submit">
+          {#if isLoading}
+            <Loader />
+          {:else}
+            SIGN IN
+          {/if}
+        </Button>
       </form>
     </div>
   </div>
@@ -112,24 +151,6 @@
     padding-top: 30px;
   }
 
-  button {
-    color: white;
-    border: none;
-    height: 55px;
-    max-width: 451px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    background-color: #00a4c6;
-    border-radius: 10px;
-    /* box-shadow: 0px 8px 24px 4px rgba(0, 115, 139, 0.16); */
-    &:hover {
-      background-color: #028da8;
-    }
-    &:disabled {
-      background-color: #9fc1c8;
-    }
-  }
-
   .align-check-box {
     display: flex;
     flex-direction: row;
@@ -154,7 +175,6 @@
     }
 
     .sign-in-form {
-      /* // margin-top: 10px; */
       margin-top: 250px;
       margin-bottom: 5vh;
     }
@@ -168,7 +188,6 @@
       max-width: 600px;
     }
     .sign-in-form {
-      /* // margin-top: 10px; */
       margin-top: 250px;
       margin-bottom: 5vh;
       padding: 30px;

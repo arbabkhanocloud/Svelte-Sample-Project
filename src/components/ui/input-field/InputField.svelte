@@ -1,42 +1,29 @@
 <script lang="ts">
-  // import Textfield from "@smui/textfield";
-
   export let label: string;
   export let id: string;
   export let type: string;
   export let className: string;
   export let placeholder: string;
   export let required: boolean = true;
-  // export let onChange: (event: Event) => void;
+  export let handleChange: () => void;
   export let val: string;
   function typeAction(node: any) {
     node.type = type;
   }
 </script>
 
-<!-- <div>
-  <Textfield
-    {id}
-    {placeholder}
-    {type}
-    {label}
-    {value}
-    variant="outlined"
-    required
-    on:input={handleInput}
-  />
-</div> -->
 <label for={id}>{label}</label>
 <input
   class={className}
   use:typeAction
   {placeholder}
   {required}
+  on:input={handleChange}
   bind:value={val}
 />
 
-<style>
-  .form-input {
+<style lang="scss">
+  .input-field-container {
     border: 1px solid #b7efea;
     height: 1.473em;
     padding-top: 15px;
@@ -55,5 +42,9 @@
     &:focus {
       outline: none;
     }
+  }
+  .invalid-input-field {
+    @extend .input-field-container;
+    border-color: #ed3a3a;
   }
 </style>
