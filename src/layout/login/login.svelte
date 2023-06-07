@@ -16,15 +16,10 @@
   $: passwordError = false;
   onMount(() => {
     console.log("mounted login page");
-
-    if (authContextStore) {
-      console.log("route Changed");
-    }
+    // if (authContextStore) {
+    //   console.log("route Changed");
+    // }
   });
-
-  $: {
-    console.log("eror:", $errors.email);
-  }
 
   const handleEmailChange = () => {
     emailError = false;
@@ -60,11 +55,19 @@
       }),
 
       onSubmit: async (values: any) => {
-        console.log("inside submit button");
         isLoading = true;
         const response = await setLogin(values.email, values.password);
         if (response === true) {
-          goto($authContextStore.landingPage);
+          const params = new URLSearchParams();
+          params.append("id", "5555");
+          params.append("ProfileName", "arbab");
+
+          const url = new URL(
+            `${$authContextStore.landingPage}`,
+            window.location.origin
+          );
+          url.search = params.toString();
+          goto(url);
         } else {
           error = "Oops! Wrong Email or Password. Give it another try!";
           emailError = true;

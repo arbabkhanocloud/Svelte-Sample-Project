@@ -16,7 +16,7 @@ export async function setLogin(username: any, password: any) {
         isAuthenticated: true,
         unAuthorized: false,
         accountType: type.data,
-        landingPage: type.data === "Prospect" ? HOME_ROUTE : LOCATION_ROUTE,
+        landingPage: type.data === "Prospect" ? HOME_ROUTE : HOME_ROUTE,
       }));
       localStorage.setItem("isAuthenticated", "true");
     }
