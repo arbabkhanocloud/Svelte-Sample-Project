@@ -33,29 +33,8 @@
     Lorem ipsum dolor sit amet consectetur. Nunc ut egestas rhoncus ac mauris.
     Sit amet aliquet leo ipsum elementum.
   </p>
-  <VideoPlayer />
+  <!-- <VideoPlayer /> -->
 </div>
 
-<style lang="scss">
-  .align-page-content {
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    padding: 20px 20px 30px 20px;
-    // margin: 61px 58px 0px 294px;
-    box-shadow: 0px 20px 35px rgba(0, 63, 74, 0.08);
-    & h1 {
-      font-size: 36px;
-    }
-    & p {
-      font-size: 14px;
-    }
-    @media screen and (max-width: 768px) {
-      margin: 23px 18px 0px 18px;
-    }
-  }
-  .murray-name {
-    white-space: nowrap;
-    color: #00a4c6;
-  }
+<style src="./Home.module.scss">
 </style>
